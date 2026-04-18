@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>383 顆地雷 — 為什麼這套系統值 200 萬，而且仿不來</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e17;
+    --surface: #151b2a;
+    --border: #2a3447;
+    --ink: #e8eef5;
+    --ink-2: #b4bece;
+    --ink-3: #7f8ba0;
+    --gold: #d4a574;
+    --emerald: #4ade80;
+    --rose: #f87171;
+    --display: "Noto Serif TC", serif;
+    --body: "Noto Sans TC", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    background-image:
+      radial-gradient(at 15% 0%, rgba(212,165,116,0.06) 0, transparent 50%),
+      radial-gradient(at 85% 100%, rgba(74,222,128,0.04) 0, transparent 50%);
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: var(--display);
+    line-height: 2;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 720px; margin: 0 auto; padding: 0 28px; }
+
+  /* Cover */
+  .cover {
+    min-height: 90vh;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center; padding: 80px 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cover-tag {
+    font-family: var(--body); font-size: 11px; color: var(--gold);
+    letter-spacing: 5px; margin-bottom: 40px;
+    padding: 6px 20px; border: 1px solid rgba(212,165,116,0.3); border-radius: 100px;
+  }
+  .cover h1 {
+    font-weight: 900; font-size: clamp(38px, 7vw, 72px);
+    line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 28px;
+  }
+  .cover h1 em { font-style: normal; color: var(--gold); }
+  .cover-sub {
+    font-size: 18px; color: var(--ink-2); max-width: 500px;
+    line-height: 1.9; margin-bottom: 60px;
+  }
+
+  /* Narrative */
+  .narrative { padding: 80px 0; }
+  .scene-break { text-align: center; margin: 70px 0 50px; color: var(--gold); opacity: 0.4; font-size: 24px; }
+  .ch-label {
+    font-family: var(--body); font-size: 11px; color: var(--gold);
+    letter-spacing: 5px; margin-bottom: 12px;
+  }
+  .ch-title {
+    font-weight: 700; font-size: clamp(26px, 4vw, 38px);
+    line-height: 1.3; margin-bottom: 36px;
+  }
+  .ch-title em { font-style: normal; color: var(--gold); }
+  p { font-size: 17px; color: var(--ink-2); margin-bottom: 22px; line-height: 2; }
+  p.lead { font-size: 21px; color: var(--ink); font-weight: 500; line-height: 1.8; margin-bottom: 32px; }
+  strong { color: var(--gold); font-weight: 600; }
+  em { color: var(--ink); font-style: italic; font-weight: 500; }
+
+  .emphasized {
+    display: block; text-align: center;
+    font-size: clamp(22px, 3.5vw, 32px); font-weight: 600; color: var(--ink);
+    padding: 48px 20px; margin: 48px 0;
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+  }
+  .emphasized em { color: var(--gold); font-style: normal; }
+
+  /* Mine card */
+  .mine {
+    background: var(--surface); border: 1px solid var(--border);
+    border-left: 3px solid var(--rose); border-radius: 0 8px 8px 0;
+    padding: 28px; margin: 28px 0;
+  }
+  .mine-num {
+    font-family: var(--body); font-size: 11px; color: var(--rose);
+    letter-spacing: 3px; margin-bottom: 8px; font-weight: 600;
+  }
+  .mine h4 { font-size: 19px; font-weight: 700; color: var(--ink); margin-bottom: 12px; }
+  .mine p { font-size: 15.5px; margin-bottom: 10px; }
+  .mine .result {
+    margin-top: 12px; padding: 12px 16px; border-radius: 6px;
+    font-size: 14px; line-height: 1.7;
+  }
+  .mine .result.boom { background: rgba(248,113,113,0.08); border-left: 2px solid var(--rose); color: var(--rose); }
+  .mine .result.fixed { background: rgba(74,222,128,0.08); border-left: 2px solid var(--emerald); color: var(--emerald); }
+
+  /* Value */
+  .value-card {
+    background: linear-gradient(135deg, rgba(212,165,116,0.1) 0%, rgba(212,165,116,0.02) 100%);
+    border: 1px solid rgba(212,165,116,0.35); border-radius: 12px;
+    padding: 48px 32px; text-align: center; margin: 48px 0;
+  }
+  .value-card-label {
+    font-family: var(--body); font-size: 11px; color: var(--gold);
+    letter-spacing: 4px; margin-bottom: 16px;
+  }
+  .value-card-num {
+    font-weight: 900; font-size: clamp(48px, 9vw, 88px);
+    color: var(--gold); line-height: 1; letter-spacing: -0.03em; margin-bottom: 12px;
+  }
+  .value-card-unit { font-size: 18px; color: var(--ink); margin-bottom: 20px; }
+  .value-card-note { font-family: var(--body); font-size: 13px; color: var(--ink-3); font-style: italic; }
+
+  /* Table */
+  .info-table {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    overflow: hidden; margin: 32px 0;
+  }
+  .info-row {
+    display: grid; grid-template-columns: 1fr auto;
+    padding: 16px 24px; border-bottom: 1px solid var(--border); align-items: center;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-row.total { background: rgba(212,165,116,0.08); }
+  .info-key { font-size: 15px; color: var(--ink-2); }
+  .info-val { font-family: var(--body); font-size: 15px; color: var(--gold); font-weight: 600; text-align: right; }
+  .info-row.total .info-key { font-weight: 700; color: var(--gold); font-size: 17px; }
+  .info-row.total .info-val { font-size: 22px; }
+
+  /* Why list */
+  .why-block {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 32px; margin: 32px 0;
+  }
+  .why-block h3 {
+    font-size: 20px; font-weight: 700; color: var(--gold);
+    margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+  }
+  .why-item { padding: 14px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 16px; }
+  .why-item:last-child { border-bottom: none; }
+  .why-icon { flex-shrink: 0; font-size: 20px; margin-top: 2px; }
+  .why-text { font-size: 15.5px; color: var(--ink-2); line-height: 1.8; }
+  .why-text strong { color: var(--ink); }
+
+  /* Ending */
+  .ending {
+    padding: 100px 28px; text-align: center; background: #111827;
+  }
+  .ending h2 {
+    font-weight: 700; font-size: clamp(24px, 3.5vw, 32px);
+    line-height: 1.5; margin-bottom: 28px;
+  }
+  .ending h2 em { color: var(--gold); font-style: normal; }
+  .ending p { max-width: 520px; margin: 0 auto 20px; font-size: 16px; color: var(--ink-2); }
+  .ending .sig {
+    margin-top: 48px; font-size: 13px; color: var(--ink-3);
+    font-style: italic; letter-spacing: 2px;
+  }
+
+  footer {
+    padding: 32px; text-align: center; font-family: var(--body);
+    font-size: 10px; color: var(--ink-3); letter-spacing: 3px;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ Cover ═══ -->
+<section class="cover">
+  <div class="cover-tag">A VALUE STORY · 2026</div>
+  <h1><em>383</em> 顆地雷</h1>
+  <p class="cover-sub">
+    一套交易系統的真正價值，<br>
+    不是程式碼有幾行，<br>
+    而是「掃過多少顆雷」。
+  </p>
+</section>
+
+<!-- ═══ 第一章 ═══ -->
+<section class="narrative">
+  <div class="container">
+    <div class="ch-label">壹 · 表面上</div>
+    <h2 class="ch-title">只是<em>一個檔案</em></h2>
+
+    <p class="lead">
+      有人會說：「這不就是一個 main.py 嗎？一個檔案而已，憑什麼要 200 萬？」
+    </p>
+
+    <p>
+      對，表面上就是一個檔案。9,300 行 Python。
+    </p>
+
+    <p>
+      就像一瓶紅酒，表面上就是一個玻璃瓶裝著液體。有的賣 200 元，有的賣 20 萬。<strong>差別不是瓶子，是裡面的東西。</strong>
+    </p>
+
+    <p>
+      而這個檔案裡面的東西，是 <strong>383 顆被掃掉的地雷</strong>。
+    </p>
+
+    <div class="emphasized">
+      每一個 try/except，<br>
+      都是一次<em>真實的爆炸</em>，<br>
+      然後修好，然後加上防護。
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 第二章 ═══ -->
+<section class="narrative" style="padding-top: 0;">
+  <div class="container">
+    <div class="scene-break">❦</div>
+    <div class="ch-label">貳 · 地雷長什麼樣</div>
+    <h2 class="ch-title">每一顆都是<em>用真錢踩的</em></h2>
+
+    <p>
+      以下是這套系統裡，幾顆最經典的地雷。每一顆都不是「想像出來的風險」，而是<strong>真的炸過</strong>。
+    </p>
+
+    <div class="mine">
+      <div class="mine-num">MINE #003</div>
+      <h4>Timestamp Error — 差 500 毫秒就拒單</h4>
+      <p>送出下單請求，交易所回「時間戳超出範圍」。不是你的邏輯錯，是你的伺服器時間跟交易所差了不到一秒。</p>
+      <div class="result boom">沒防護的後果：用戶按「下單」，無聲無息失敗，錢沒進場，訊號過了才發現。</div>
+      <div class="result fixed">加了防護：自動補正 500ms 重試，用戶完全無感。</div>
+    </div>
+
+    <div class="mine">
+      <div class="mine-num">MINE #007</div>
+      <h4>止損沒掛上 — API 說成功，但騙你</h4>
+      <p>下單成功了，API 回傳「OK」。但止損根本沒掛上去。因為 BingX 的 stopLoss 參數要用一種特殊格式序列化，文件上寫得極模糊。</p>
+      <div class="result boom">沒防護的後果：用戶以為有保險，市場反轉直接爆倉。真金白銀蒸發。</div>
+      <div class="result fixed">加了防護：強制 json.dumps 序列化 + 驗證止損是否真的掛上。</div>
+    </div>
+
+    <div class="mine">
+      <div class="mine-num">MINE #014</div>
+      <h4>槓桿暗中縮水 — 你設 100x，他給你 50x</h4>
+      <p>設定 100 倍槓桿，交易所回「設定成功」。但實際上只給你 50 倍。它不會告訴你，你要自己去查倉位才發現。</p>
+      <div class="result boom">沒防護的後果：倉位金額只有預期的一半，用戶以為 bot 算錯。</div>
+      <div class="result fixed">加了防護：二分法探測真實最高槓桿，從設定值開始往下找到真正能用的值。</div>
+    </div>
+
+    <div class="mine">
+      <div class="mine-num">MINE #021</div>
+      <h4>名義倉位上限 — 文件完全沒提</h4>
+      <p>TP1 下單成功，TP2 下單失敗。原因：某些幣在高槓桿時有「隱藏上限」，超過就拒絕。這件事 BingX 文件上一個字都沒寫。</p>
+      <div class="result boom">沒防護的後果：TP2 靜默失敗，用戶以為全倉都有掛 TP，結果只掛了一半。</div>
+      <div class="result fixed">加了防護：從錯誤訊息用 regex 抓出上限值，自動縮單到合法範圍，快取給下次用。</div>
+    </div>
+
+    <div class="mine">
+      <div class="mine-num">MINE #050</div>
+      <h4>50 人同時收訊號 — 第 50 個人等 25 秒</h4>
+      <p>一則訊號來了，要同時發給所有用戶。最直覺的寫法是一個一個排隊發。每個人 0.5 秒，50 人就是 25 秒。加密貨幣的世界，25 秒價格早飛了。</p>
+      <div class="result boom">沒防護的後果：最後一個用戶收到訊號時進場點已過，下單直接賠。他會罵你「這破 bot 是慢半拍嗎？」</div>
+      <div class="result fixed">加了防護：20 條通道同時發送，所有人 1 秒內收到。像銀行從 1 個窗口變 20 個。</div>
+    </div>
+
+    <div class="mine">
+      <div class="mine-num">MINE #383</div>
+      <h4>移動保本的 API 不存在 — 靜默失敗</h4>
+      <p>TP1 觸發後要把止損移到保本線，保護剩餘倉位。但 BingX 的那個 API 端點已經被廢棄了，呼叫直接報錯。更可怕的是：程式靜默失敗，不通知用戶。</p>
+      <div class="result boom">沒防護的後果：用戶以為保本生效了，實際上止損還在原位。市場反轉，本來該保住的利潤全吐回去。</div>
+      <div class="result fixed">加了防護：改用正確的 API（取消舊止損 → 下新止損單），失敗時通知用戶手動處理。</div>
+    </div>
+
+    <p style="margin-top: 40px;">
+      以上只是 6 顆。還有 <strong>377 顆</strong>沒講。
+    </p>
+
+    <p>
+      每一顆的故事都一樣：
+    </p>
+
+    <div class="emphasized">
+      寫好 → 上線 → <em>炸了</em> → 查原因 → 加保護 → 再上線<br><br>
+      循環 <em>383</em> 次。
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 第三章 ═══ -->
+<section class="narrative" style="padding-top: 0;">
+  <div class="container">
+    <div class="scene-break">❦</div>
+    <div class="ch-label">參 · 地雷不認人</div>
+    <h2 class="ch-title">資深工程師來，<br><em>一樣要踩</em></h2>
+
+    <p class="lead">
+      有人會想：「我找個資深工程師，是不是就不用踩這些坑？」
+    </p>
+
+    <p>
+      <strong>不是。</strong>
+    </p>
+
+    <p>
+      BingX 的 timestamp error 不會因為你資深就不出現。槓桿暗中縮水不會因為你寫過 10 年 code 就放過你。名義倉位上限不會因為你是 CTO 就自動顯示在文件裡。
+    </p>
+
+    <p>
+      <strong>地雷不認人，只認有沒有走過那條路。</strong>
+    </p>
+
+    <p>
+      差別只在踩的速度：
+    </p>
+
+    <div class="info-table">
+      <div class="info-row">
+        <span class="info-key">新手工程師踩完 383 顆</span>
+        <span class="info-val">12+ 個月（可能放棄）</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">資深工程師踩完 383 顆</span>
+        <span class="info-val">6-9 個月</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">這套系統的業主（AI 協作）</span>
+        <span class="info-val">14 天</span>
+      </div>
+    </div>
+
+    <p>
+      速度不同，<strong>但地雷數量一樣</strong>。誰來都是 383 顆。
+    </p>
+
+    <p>
+      而且這 383 顆不是「寫在教科書上的理論風險」。是<strong>用真錢、真帳戶、真用戶踩出來的實戰經驗</strong>。用假資料模擬測試，大概只能找到其中 30 顆。剩下 353 顆，要上線跑真錢才會冒出來。
+    </p>
+
+    <div class="emphasized">
+      你花 200 萬買的，<br>
+      不是 9,300 行程式碼，<br>
+      是一張<em>「掃雷完畢的地圖」</em>。
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 第四章 ═══ -->
+<section class="narrative" style="padding-top: 0;">
+  <div class="container">
+    <div class="scene-break">❦</div>
+    <div class="ch-label">肆 · 為什麼仿不來</div>
+    <h2 class="ch-title">看得到 code，<br>看不到<em>為什麼</em></h2>
+
+    <p class="lead">
+      假設有人拿到了這份 9,300 行的原始碼，他能複製嗎？
+    </p>
+
+    <p>
+      表面上能。複製貼上，部署，跑起來。
+    </p>
+
+    <p>
+      但他不知道的事：
+    </p>
+
+    <div class="why-block">
+      <h3>🔒 仿不來的 5 個原因</h3>
+
+      <div class="why-item">
+        <div class="why-icon">①</div>
+        <div class="why-text">
+          <strong>他不知道為什麼有 383 個 try/except。</strong><br>
+          他會覺得「寫太多了吧，是不是不會寫才加這麼多保護？」然後他會「優化」——拿掉一堆他覺得多餘的保護。上線後，第一個用戶就遇到沒保護的 bug，系統當機。
+        </div>
+      </div>
+
+      <div class="why-item">
+        <div class="why-icon">②</div>
+        <div class="why-text">
+          <strong>他不懂交易。</strong><br>
+          「什麼是分倉？什麼是移動保本？什麼是名義倉位？」光教他搞懂這些交易概念就要 2-4 週。搞懂了也不代表他能正確實作——因為他沒有「被爆倉過」的體感。
+        </div>
+      </div>
+
+      <div class="why-item">
+        <div class="why-icon">③</div>
+        <div class="why-text">
+          <strong>他沒有 BingX 的踩坑經驗。</strong><br>
+          BingX 不是幣安，文件爛、社群小、API 會默默改版不通知。今天還能用的端點，下個月可能就廢了。這些雷沒有任何文件會寫，只能自己踩。
+        </div>
+      </div>
+
+      <div class="why-item">
+        <div class="why-icon">④</div>
+        <div class="why-text">
+          <strong>他沒有用戶回饋。</strong><br>
+          這套系統的 49 個功能，每一個都是「用戶說想要」或「用戶抱怨後加的」。工程師自己坐在電腦前想不出來「為什麼需要 V1 vs V2 勝率對決」這種功能。
+        </div>
+      </div>
+
+      <div class="why-item">
+        <div class="why-icon">⑤</div>
+        <div class="why-text">
+          <strong>他沒有實戰數據佐證。</strong><br>
+          71% 勝率、230 筆真實成交、多用戶同時運作——這不是 demo，是生產環境。任何潛在買家看到這個數據就知道：「這東西是真的能跑。」仿冒品沒有這個證明。
+        </div>
+      </div>
+    </div>
+
+    <p>
+      最致命的一點：
+    </p>
+
+    <div class="emphasized">
+      他拿到你的 code，<br>
+      就像拿到一張<em>掃雷地圖</em>，<br>
+      但他<em>不知道哪些是雷</em>。<br><br>
+      他一改，雷就回來了。
+    </div>
+
+    <p>
+      因為那 383 個 try/except，每一個背後都有一個「為什麼要加這個」的故事。他看到 code 會想「這行多餘吧？」，然後刪掉。結果就是他刪掉了一個沙包，地雷重新露出來。
+    </p>
+
+    <p>
+      <strong>看得到 code，看不到血淚。</strong>
+    </p>
+  </div>
+</section>
+
+<!-- ═══ 第五章 ═══ -->
+<section class="narrative" style="padding-top: 0;">
+  <div class="container">
+    <div class="scene-break">❦</div>
+    <div class="ch-label">伍 · 價值分解</div>
+    <h2 class="ch-title">200 萬<em>怎麼算的</em></h2>
+
+    <p class="lead">
+      這不是隨便喊的數字。是根據「重建成本」算的。
+    </p>
+
+    <p>
+      如果一個金主今天要請工程師，從零做出一模一樣的系統：
+    </p>
+
+    <div class="info-table">
+      <div class="info-row">
+        <span class="info-key">程式開發（530 工時 × 資深時薪）</span>
+        <span class="info-val">80 ~ 120 萬</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">踩坑成本（383 顆地雷 × debug 時間）</span>
+        <span class="info-val">+ 50 ~ 80 萬</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">商業邏輯設計（付費牆 / 風控 / 統計）</span>
+        <span class="info-val">+ 30 ~ 50 萬</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">穩定運行驗證（真實用戶 + 真實資金）</span>
+        <span class="info-val">+ 20 ~ 40 萬</span>
+      </div>
+      <div class="info-row total">
+        <span class="info-key">完整價值</span>
+        <span class="info-val">180 ~ 290 萬</span>
+      </div>
+    </div>
+
+    <p>
+      而且這還沒算「時間成本」。
+    </p>
+
+    <p>
+      資深工程師從零做，要 <strong>6-9 個月</strong>。<br>
+      這 6-9 個月裡，金主沒有系統可以用、沒有收入、沒有用戶，還要持續付工程師薪水。
+    </p>
+
+    <p>
+      更常見的結果是：
+    </p>
+
+    <div class="mine">
+      <div class="mine-num">金主的真實體驗</div>
+      <h4>花 50 萬找便宜工程師</h4>
+      <p>做了 3 個月交一版「能跑」的東西。用了 2 天發現一堆 bug。工程師修了 1 個月越修越爛。金主放棄，50 萬打水漂。重新找人，又花一次錢。</p>
+    </div>
+
+    <div class="mine">
+      <div class="mine-num">另一個金主</div>
+      <h4>花 120 萬找資深工程師</h4>
+      <p>做了 6 個月品質不錯，但工程師不懂交易。來回溝通修正又 2 個月。最後 8 個月才上線，實際花了 150 萬。結果上線第一週就遇到「名義倉位上限」這個雷——因為工程師用模擬倉測試從來不會遇到這個。</p>
+    </div>
+
+    <div class="value-card">
+      <div class="value-card-label">THIS SYSTEM · 這套系統</div>
+      <div class="value-card-num">200 萬+</div>
+      <div class="value-card-unit">新台幣</div>
+      <div class="value-card-note">
+        = 程式碼 + 383 顆已掃的地雷 + 商業邏輯 + 實戰驗證<br>
+        而且只花了 14 天建成
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 第六章 ═══ -->
+<section class="narrative" style="padding-top: 0;">
+  <div class="container">
+    <div class="scene-break">❦</div>
+    <div class="ch-label">陸 · 護城河</div>
+    <h2 class="ch-title">真正的護城河<br>不是 code</h2>
+
+    <p class="lead">
+      code 可以被複製。但以下三樣東西不能：
+    </p>
+
+    <p>
+      <strong>第一，知道「要做什麼」。</strong><br>
+      49 個功能不是工程師想出來的。是一個懂交易、懂用戶、有商業直覺的人設計出來的。三層付費牆怎麼設？風控怎麼抓？統計怎麼分 V1 vs V2？這些是產品思維，不是技術。
+    </p>
+
+    <p>
+      <strong>第二，知道「哪裡會壞」。</strong><br>
+      383 個保護不是 paranoid。每一個都是用真錢踩過的坑。拿掉任何一個，系統就會在某個時刻、某個用戶、某個幣種上爆炸。新手不知道要加哪些，資深工程師知道但要花半年重新踩一遍。
+    </p>
+
+    <p>
+      <strong>第三，證明「能跑」。</strong><br>
+      V1 勝率 71%、230 筆真實成交、多用戶同時使用、沒有因為 bug 導致用戶爆倉。這是信用，不是功能。仿冒品做不出這個實績。
+    </p>
+
+    <div class="emphasized">
+      code 是<em>地圖</em>，<br>
+      383 個 try/except 是<em>掃雷的痕跡</em>，<br>
+      而你的大腦是畫出這張地圖的<em>那個人</em>。<br><br>
+      三者缺一不可。
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 結尾 ═══ -->
+<section class="ending">
+  <div class="container">
+    <h2>
+      下次有人說<br>
+      「這不就是一個檔案嗎？」<br><br>
+      你可以回他：
+    </h2>
+    <p style="font-size: 20px; color: var(--gold); font-weight: 600;">
+      「對，炸彈也只是一個鐵殼子。<br>
+      貴的不是殼子，是裡面的設計。」
+    </p>
+    <p style="margin-top: 40px;">
+      而這個設計，是用 14 天、266 小時、383 次爆炸換來的。
+    </p>
+    <p>
+      <strong>你仿得了 code，仿不了坑。</strong>
+    </p>
+    <div class="sig">— 383 MINES CLEARED · 2026 —</div>
+  </div>
+</section>
+
+<footer>
+  383 LANDMINES · A VALUE STORY · 2026
+</footer>
+
+</body>
+</html>
