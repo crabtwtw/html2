@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BingX 訊號跟單 Bot — 使用教學</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a1219;
+  --bg-2:#0d1620;
+  --bg-card:#16202c;
+  --bg-card-2:#1c2738;
+  --line:#243142;
+  --line-bright:#2d3d52;
+  --green:#00ff9d;
+  --green-soft:#00d97e;
+  --green-glow:rgba(0,255,157,0.15);
+  --red:#ff4d6d;
+  --red-soft:#ff6b85;
+  --gold:#ffb84c;
+  --text:#ffffff;
+  --text-soft:#b8c4d0;
+  --text-mute:#6a7686;
+  --text-faint:#4a5566;
+  --sans:'Noto Sans TC',sans-serif;
+  --mono:'JetBrains Mono','Noto Sans TC',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text-soft);
+  font-family:var(--sans);
+  font-weight:400;
+  line-height:1.85;
+  font-size:16px;
+  background-image:
+    radial-gradient(ellipse at 20% 0%,rgba(0,255,157,0.08),transparent 60%),
+    radial-gradient(ellipse at 80% 100%,rgba(0,217,126,0.06),transparent 60%);
+  min-height:100vh;
+}
+
+/* ======= HERO ======= */
+.hero{
+  text-align:center;
+  padding:80px 24px 60px;
+  position:relative;
+}
+.hero-tag{
+  display:inline-block;
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.3em;
+  color:var(--green);
+  margin-bottom:32px;
+  padding:8px 20px;
+  border:1px solid rgba(0,255,157,0.3);
+  border-radius:2px;
+  background:rgba(0,255,157,0.05);
+  text-transform:uppercase;
+}
+.hero h1{
+  font-size:clamp(40px,7vw,64px);
+  line-height:1.2;
+  font-weight:900;
+  color:var(--text);
+  margin-bottom:24px;
+  letter-spacing:-0.01em;
+}
+.hero h1 .green{color:var(--green);text-shadow:0 0 30px rgba(0,255,157,0.4)}
+.hero-sub{
+  font-size:18px;
+  color:var(--text-soft);
+  max-width:620px;
+  margin:0 auto 48px;
+  line-height:1.8;
+  font-weight:400;
+}
+.hero-sub strong{color:var(--green);font-weight:700}
+
+/* ======= STATS ======= */
+.stats{
+  display:flex;
+  justify-content:center;
+  gap:40px;
+  flex-wrap:wrap;
+  padding:32px 24px;
+  margin:0 24px;
+}
+.stat{text-align:center}
+.stat-num{
+  font-size:64px;
+  font-weight:900;
+  color:var(--green);
+  line-height:1;
+  letter-spacing:-0.03em;
+  text-shadow:0 0 40px rgba(0,255,157,0.5);
+  font-family:var(--sans);
+}
+.stat-label{
+  font-size:13px;
+  color:var(--text-mute);
+  margin-top:8px;
+  letter-spacing:0.05em;
+}
+
+/* ======= CONTAINER ======= */
+.container{
+  max-width:760px;
+  margin:0 auto;
+  padding:60px 24px;
+}
+
+/* ======= SECTION HEADER ======= */
+.section-head{
+  text-align:center;
+  margin-bottom:48px;
+}
+.section-tag{
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--green);
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  margin-bottom:14px;
+  font-weight:500;
+}
+.section-head h2{
+  font-size:38px;
+  font-weight:900;
+  color:var(--text);
+  line-height:1.3;
+  letter-spacing:-0.01em;
+}
+.section-head h2 .red{
+  color:var(--red);
+  text-decoration:underline;
+  text-decoration-color:var(--red);
+  text-decoration-thickness:3px;
+  text-underline-offset:6px;
+}
+.section-head h2 .green{color:var(--green)}
+
+/* ======= STEP CARDS (痛點卡片風) ======= */
+.cards{
+  display:grid;
+  gap:18px;
+  margin-bottom:80px;
+}
+.card{
+  background:var(--bg-card);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:32px 28px;
+  position:relative;
+  transition:border-color 0.3s;
+}
+.card:hover{border-color:var(--green-soft)}
+.card-icon{
+  font-size:48px;
+  margin-bottom:18px;
+  display:block;
+  filter:drop-shadow(0 0 12px rgba(0,255,157,0.2));
+}
+.card h3{
+  font-size:22px;
+  font-weight:700;
+  color:var(--text);
+  margin-bottom:12px;
+  letter-spacing:-0.01em;
+}
+.card p{
+  color:var(--text-soft);
+  font-size:15px;
+  line-height:1.8;
+}
+.card-num{
+  position:absolute;
+  top:24px;right:28px;
+  font-family:var(--mono);
+  font-size:14px;
+  color:var(--green);
+  letter-spacing:0.1em;
+  font-weight:700;
+}
+
+/* ======= STEP NUMBERED ======= */
+.step{
+  background:var(--bg-card);
+  border:1px solid var(--line);
+  border-left:4px solid var(--green);
+  border-radius:8px;
+  padding:32px 32px;
+  margin-bottom:18px;
+  position:relative;
+}
+.step-num-big{
+  display:inline-block;
+  width:48px;height:48px;
+  background:var(--green);
+  color:var(--bg);
+  border-radius:50%;
+  text-align:center;
+  line-height:48px;
+  font-weight:900;
+  font-size:22px;
+  margin-bottom:18px;
+  box-shadow:0 0 20px rgba(0,255,157,0.4);
+}
+.step h3{
+  font-size:22px;
+  color:var(--text);
+  font-weight:700;
+  margin-bottom:14px;
+}
+.step p{color:var(--text-soft);font-size:15px;margin-bottom:12px}
+.step strong{color:var(--green);font-weight:700}
+
+/* ======= TOC ======= */
+.toc{
+  background:var(--bg-card);
+  border:1px solid var(--line);
+  padding:28px 32px;
+  margin-bottom:60px;
+  border-radius:8px;
+}
+.toc-title{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.25em;
+  color:var(--green);
+  margin-bottom:16px;
+  text-transform:uppercase;
+}
+.toc-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px 20px}
+.toc-list li{font-size:14px}
+.toc-list a{
+  color:var(--text-soft);
+  text-decoration:none;
+  display:inline-block;
+  padding:6px 0;
+  transition:all 0.2s;
+}
+.toc-list a:hover{color:var(--green);padding-left:6px}
+.toc-list .num{color:var(--green);font-family:var(--mono);font-weight:700;margin-right:8px}
+
+/* ======= SECTIONS ======= */
+section{margin-bottom:80px;scroll-margin-top:24px}
+section h2{
+  font-size:32px;
+  color:var(--text);
+  font-weight:900;
+  margin-bottom:24px;
+  text-align:center;
+  letter-spacing:-0.01em;
+}
+section h2 .accent{color:var(--green)}
+section h3{
+  font-size:22px;
+  color:var(--text);
+  font-weight:700;
+  margin:28px 0 14px;
+}
+section h4{
+  font-size:17px;
+  color:var(--green);
+  font-weight:700;
+  margin:18px 0 10px;
+}
+section p{color:var(--text-soft);margin-bottom:14px;font-size:15px}
+section strong{color:var(--text);font-weight:700}
+
+/* ======= MSG BUBBLE ======= */
+.bubble{
+  background:var(--bg-card-2);
+  border:1px solid var(--line);
+  border-left:3px solid var(--green);
+  padding:18px 24px;
+  margin:14px 0;
+  border-radius:8px;
+  font-size:14.5px;
+  color:var(--text-soft);
+  line-height:1.8;
+  font-family:var(--sans);
+}
+.bubble.gold{border-left-color:var(--gold)}
+.bubble.red{border-left-color:var(--red)}
+.bubble.blue{border-left-color:#5a9eff}
+.bubble strong{color:var(--text);display:block;margin-bottom:6px}
+
+/* ======= CALLOUT ======= */
+.callout{
+  padding:18px 26px;
+  border-radius:6px;
+  margin:18px 0;
+  border-left:3px solid;
+  background:var(--bg-card-2);
+  font-size:14.5px;
+  color:var(--text-soft);
+}
+.callout strong{display:block;font-size:13px;letter-spacing:0.05em;margin-bottom:6px;font-family:var(--mono)}
+.callout.tip{border-color:var(--green)}
+.callout.tip strong{color:var(--green)}
+.callout.warn{border-color:var(--gold)}
+.callout.warn strong{color:var(--gold)}
+.callout.danger{border-color:var(--red)}
+.callout.danger strong{color:var(--red)}
+
+/* ======= TABLE ======= */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin:20px 0;
+  font-size:14px;
+  background:var(--bg-card);
+  border:1px solid var(--line);
+  border-radius:6px;
+  overflow:hidden;
+}
+th{
+  text-align:left;
+  padding:14px 18px;
+  background:var(--bg-card-2);
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.15em;
+  color:var(--green);
+  text-transform:uppercase;
+  font-weight:600;
+  border-bottom:1px solid var(--line-bright);
+}
+td{padding:14px 18px;border-bottom:1px solid var(--line);color:var(--text-soft);vertical-align:top}
+td strong{color:var(--text)}
+tr:last-child td{border-bottom:none}
+
+/* ======= LIST ======= */
+ul,ol{margin:14px 0 14px 22px;color:var(--text-soft)}
+ul li,ol li{margin-bottom:8px;font-size:15px}
+ul li::marker{color:var(--green)}
+ol li::marker{color:var(--green);font-weight:700}
+
+/* ======= BUTTON DEMO ======= */
+.btn{
+  display:inline-block;
+  padding:10px 20px;
+  border-radius:4px;
+  font-size:14px;
+  font-weight:600;
+  margin:5px;
+  background:var(--bg-card-2);
+  color:var(--text);
+  border:1px solid var(--line);
+}
+.btn.green{background:var(--green);color:var(--bg);border-color:var(--green)}
+.btn.gold{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.btn.red{background:var(--red);color:#fff;border-color:var(--red)}
+
+/* ======= CMD BOX ======= */
+.cmd-box{
+  background:#000;
+  color:var(--green);
+  padding:14px 20px;
+  border-radius:4px;
+  font-family:var(--mono);
+  font-size:14px;
+  margin:12px 0;
+  border:1px solid var(--line);
+}
+
+/* ======= FAQ ======= */
+.faq{
+  background:var(--bg-card);
+  border:1px solid var(--line);
+  border-left:3px solid var(--green);
+  padding:24px 28px;
+  margin-bottom:14px;
+  border-radius:6px;
+}
+.faq-q{
+  color:var(--text);
+  font-size:17px;
+  font-weight:700;
+  margin-bottom:10px;
+}
+.faq-q::before{
+  content:'Q';
+  color:var(--green);
+  font-weight:900;
+  margin-right:10px;
+  font-size:18px;
+}
+.faq-a{color:var(--text-soft);font-size:15px;line-height:1.8}
+.faq-a::before{
+  content:'A';
+  color:var(--gold);
+  font-weight:900;
+  margin-right:10px;
+  font-size:16px;
+}
+
+/* ======= CTA ======= */
+.cta{
+  background:linear-gradient(135deg,#1a2a3e 0%,#0a1620 100%);
+  border:1px solid var(--green-soft);
+  text-align:center;
+  padding:60px 32px;
+  margin:60px 0;
+  border-radius:12px;
+  position:relative;
+  overflow:hidden;
+}
+.cta::before{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 0%,rgba(0,255,157,0.15),transparent 70%);
+  pointer-events:none;
+}
+.cta h2{position:relative;z-index:2;font-size:32px;color:var(--text);margin-bottom:14px}
+.cta h2 .green{color:var(--green)}
+.cta p{position:relative;z-index:2;color:var(--text-soft);margin-bottom:24px}
+
+/* ======= FOOTER ======= */
+footer{
+  text-align:center;
+  padding:40px 24px;
+  border-top:1px solid var(--line);
+  margin-top:60px;
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--text-mute);
+  letter-spacing:0.1em;
+}
+footer .green{color:var(--green)}
+
+/* ======= PRINT ======= */
+@media print{
+  body{background:#fff;color:#000}
+  .hero{padding:32px 24px}
+  .hero h1,.section-head h2,.card h3,.step h3,section h2,section h3{color:#000}
+  .hero h1 .green,.stat-num,section h2 .accent,.section-head h2 .green{color:#0a8754}
+  .card,.step,.bubble,.callout,table,.faq,.toc,.cta{background:#fff;border-color:#ccc;break-inside:avoid}
+  .cmd-box{background:#f0f0f0;color:#000;border:1px solid #ccc}
+}
+
+/* ======= MOBILE ======= */
+@media (max-width:720px){
+  .hero{padding:48px 18px 40px}
+  .hero h1{font-size:36px}
+  .hero-sub{font-size:16px}
+  .stat-num{font-size:48px}
+  .stats{gap:24px;padding:20px 12px}
+  .container{padding:40px 18px}
+  .section-head h2{font-size:26px}
+  .card{padding:24px 22px}
+  .card-icon{font-size:40px}
+  .step{padding:24px 22px}
+  .toc-list{grid-template-columns:1fr}
+  section h2{font-size:24px}
+  table{font-size:13px}
+  th,td{padding:10px 12px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<div class="hero">
+  <div class="hero-tag">USER MANUAL · 使用教學</div>
+  <h1>讓您的 BingX<br><span class="green">自動穩穩</span><br>跟單賺</h1>
+  <p class="hero-sub">不用盯盤、不用懂技術、不用怕來不及。<br>BingX 訊號自動下單 +<strong>不爆倉設計</strong>，安心累積複利。</p>
+</div>
+
+<!-- ============ STATS ============ -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">100%</div>
+    <div class="stat-label">12 個月存活率</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">65%+</div>
+    <div class="stat-label">諧波訊號勝率</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">3 步</div>
+    <div class="stat-label">完成註冊</div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ============ TOC ============ -->
+<nav class="toc">
+  <div class="toc-title">CONTENTS · 目錄</div>
+  <ul class="toc-list">
+    <li><a href="#what"><span class="num">01</span>這個 Bot 能幫您什麼</a></li>
+    <li><a href="#setup"><span class="num">02</span>3 步驟完成註冊</a></li>
+    <li><a href="#trade"><span class="num">03</span>第一次下單流程</a></li>
+    <li><a href="#card"><span class="num">04</span>看懂訊號卡</a></li>
+    <li><a href="#result"><span class="num">05</span>看懂下單結果</a></li>
+    <li><a href="#progress"><span class="num">06</span>看懂訊號完成通知</a></li>
+    <li><a href="#settings"><span class="num">07</span>設定您的偏好</a></li>
+    <li><a href="#commands"><span class="num">08</span>常用指令</a></li>
+    <li><a href="#safety"><span class="num">09</span>安全保護機制</a></li>
+    <li><a href="#faq"><span class="num">10</span>常見問題 FAQ</a></li>
+  </ul>
+</nav>
+
+<!-- ============ 01 WHAT ============ -->
+<section id="what">
+  <div class="section-head">
+    <div class="section-tag">SECTION 01</div>
+    <h2>這個 Bot 能幫您<span class="green">什麼</span>？</h2>
+  </div>
+
+  <div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+    <div class="card">
+      <span class="card-num">A</span>
+      <span class="card-icon">🔔</span>
+      <h3>訊號自動推送</h3>
+      <p>專業諧波交易訊號送到您的 Telegram。您不用自己分析行情。</p>
+    </div>
+
+    <div class="card">
+      <span class="card-num">B</span>
+      <span class="card-icon">⚡</span>
+      <h3>一鍵下單</h3>
+      <p>看到訊號卡按一個按鈕，系統自動在 BingX 下單，止損止盈都自動設好。</p>
+    </div>
+
+    <div class="card">
+      <span class="card-num">C</span>
+      <span class="card-icon">🛡️</span>
+      <h3>不爆倉保護</h3>
+      <p>自動算出最安全槓桿，避免「強平先觸發」陷阱。<strong style="color:var(--green)">12 個月實測 100% 客戶帳戶都還在</strong>。</p>
+    </div>
+
+    <div class="card">
+      <span class="card-num">D</span>
+      <span class="card-icon">💰</span>
+      <h3>自動鎖利</h3>
+      <p>賺到 TP1 自動把止損推到保本價，<strong style="color:var(--green)">鎖住已賺到的部分</strong>。</p>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <strong>⭐ 適合誰</strong>
+    <p>上班族沒時間盯盤、想穩定累積資產的人、被其他自動跟單坑過想找有風險管理的人。</p>
+  </div>
+</section>
+
+<!-- ============ 02 SETUP ============ -->
+<section id="setup">
+  <div class="section-head">
+    <div class="section-tag">SECTION 02</div>
+    <h2><span class="green">3 步驟</span>完成註冊</h2>
+  </div>
+
+  <div class="step">
+    <div class="step-num-big">1</div>
+    <h3>輸入 /start</h3>
+    <p>在 Telegram 找到 Bingx 分析訂單 API 機器人，點開對話框輸入：</p>
+    <div class="cmd-box">/start</div>
+    <p>機器人會回覆並引導您進入下一步。</p>
+  </div>
+
+  <div class="step">
+    <div class="step-num-big">2</div>
+    <h3>輸入 BingX API Key</h3>
+    <p>機器人會請您輸入 BingX 的 API Key 跟 Secret Key。</p>
+    <div class="callout warn">
+      <strong>API KEY 怎麼取得？</strong>
+      <p>登入 BingX → 點頭像 → 「API 管理」→ 建立 API → <strong>勾選「合約交易 + 讀取」權限</strong> → 複製 Key 跟 Secret</p>
+    </div>
+    <div class="callout danger">
+      <strong>⚠️ 重要安全提醒</strong>
+      <p><strong>不要勾「提現」權限</strong>！只要勾「合約交易 + 讀取」就好。即使 API Key 外流，駭客也提不走您的錢。</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num-big">3</div>
+    <h3>等待管理員審核</h3>
+    <p>送出 API Key 後，您會看到：</p>
+    <div class="bubble blue">⏳ 你的 API 正在審核中，請耐心等待。</div>
+    <p>管理員審核通過後：</p>
+    <div class="bubble">✅ 你的帳號已開通！可以開始轉傳訊號下單。</div>
+    <p>看到這則訊息表示您可以開始用了。</p>
+  </div>
+
+  <div class="callout tip">
+    <strong>💡 申請被拒絕怎麼辦？</strong>
+    <p>會收到：『❌ 申請未通過。如需重新申請，請輸入 /start』<br>意思是您可以重新跑一次申請流程，<strong>不是永久封鎖</strong>。</p>
+  </div>
+</section>
+
+<!-- ============ 03 TRADE ============ -->
+<section id="trade">
+  <div class="section-head">
+    <div class="section-tag">SECTION 03</div>
+    <h2>第一次<span class="green">下單流程</span></h2>
+  </div>
+
+  <div class="step">
+    <div class="step-num-big">1</div>
+    <h3>收到訊號卡</h3>
+    <p>當訊號發布頻道發出新訊號，您會自動收到「訊號卡」：</p>
+    <div class="bubble">
+      <strong>已解析訊號</strong>
+      ━━━━━━━━━━<br>
+      【基本資訊】<br>
+      交易對：BTC-USDT（1小時）<br>
+      方向：📈 買漲<br>
+      止損：65000<br>
+      止盈1：68000　止盈2：70000<br><br>
+
+      【目前設定】<br>
+      下單環境：💰 真實<br>
+      自動槓桿：50x<br>
+      保證金模式：🗂 分倉 20 倉<br><br>
+
+      【帳戶資訊】<br>
+      💰 真實倉可用：500 USDT<br>
+      ─── 下單試算 ───<br>
+      🔓 預估保證金：23.75 USDT<br>
+      🪙 名義倉位：1187 USDT<br>
+      ─── 風險與獲利 ───<br>
+      🧮 最多虧損：35 USDT<br>
+      💰 TP1 達成獲利：80 USDT
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num-big">2</div>
+    <h3>按下單按鈕</h3>
+    <p>訊號卡下方有兩個按鈕：</p>
+    <p>
+      <span class="btn gold">💰 真實</span>用真錢下單到您的 BingX 帳戶<br>
+      <span class="btn green">🌐 模擬</span>用模擬倉測試（不花錢）
+    </p>
+    <div class="callout tip">
+      <strong>💡 第一次建議用「模擬」</strong>
+      <p>先按「🌐 模擬」測試 5-10 筆，確認流程跟設定都對，再切到「💰 真實」。</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num-big">3</div>
+    <h3>收到下單結果</h3>
+    <p>按下單後 1-2 秒，系統會回覆下單細節：</p>
+    <ul>
+      <li>實際下單的保證金（已扣 0.95 安全緩衝）</li>
+      <li>實際槓桿（系統挑最安全的）</li>
+      <li>最大可能虧損</li>
+      <li>TP1/TP2 訂單已掛好</li>
+    </ul>
+    <p style="margin-top:14px;color:var(--green)"><strong>同時，訊號卡上的「真實倉可用」會自動更新</strong>，餘額變化即代表下單成功。</p>
+  </div>
+
+  <div class="step">
+    <div class="step-num-big">4</div>
+    <h3>等待結果通知</h3>
+    <p>下單後您不用做任何事，系統自動處理。訊號完成時會通知：</p>
+    <p>
+      <span class="btn green">✅ 訊號完成</span> 賺錢出場<br>
+      <span class="btn red">📕 倉位虧損出場</span> 虧損出場<br>
+      <span class="btn gold">🔐 TP1 保本已觸發</span> TP1 達成已鎖獲利
+    </p>
+  </div>
+</section>
+
+<!-- ============ 04 CARD ============ -->
+<section id="card">
+  <div class="section-head">
+    <div class="section-tag">SECTION 04</div>
+    <h2>看懂<span class="green">訊號卡</span></h2>
+  </div>
+
+  <p style="text-align:center;margin-bottom:32px">訊號卡有 4 個區塊，由上到下說明：</p>
+
+  <h3>① 基本資訊</h3>
+  <p>訊號發布者給的核心數據：</p>
+  <table>
+    <thead><tr><th>欄位</th><th>意思</th></tr></thead>
+    <tbody>
+      <tr><td><strong>交易對</strong></td><td>哪個幣種（BTC、ETH 等）</td></tr>
+      <tr><td><strong>方向</strong></td><td>📈 買漲 / 📉 買跌</td></tr>
+      <tr><td><strong>止損</strong></td><td>萬一行情走錯，這個價格自動出場</td></tr>
+      <tr><td><strong>止盈 1/2</strong></td><td>賺到這個價格自動部分平倉鎖利</td></tr>
+      <tr><td><strong>停損幅度</strong></td><td>從進場到止損距離多少 %</td></tr>
+    </tbody>
+  </table>
+
+  <h3>② 目前設定</h3>
+  <ul>
+    <li><strong>下單環境</strong>：真實 / 模擬</li>
+    <li><strong>進場方式</strong>：立即市價（按下立刻成交）</li>
+    <li><strong>保證金模式</strong>：分倉 20 倉 = 餘額自動分 20 份用</li>
+    <li><strong>自動槓桿</strong>：系統算的安全槓桿（已加 0.5% 緩衝）</li>
+  </ul>
+
+  <h3>③ 帳戶資訊</h3>
+  <p>分成 3 段顯示，每段都有分隔線：</p>
+
+  <h4>第 1 段：帳戶餘額</h4>
+  <ul>
+    <li><strong>💰 真實倉可用</strong>：BingX 真實倉現在有多少 USDT 可用</li>
+    <li><strong>🌐 模擬倉可用</strong>：模擬倉餘額</li>
+  </ul>
+
+  <h4>第 2 段：下單試算</h4>
+  <ul>
+    <li><strong>🔓 預估保證金</strong>：這筆會用您多少錢（已扣 0.95 安全緩衝）</li>
+    <li><strong>🪙 名義倉位</strong>：保證金 × 槓桿 = 開多大的倉</li>
+    <li><strong>📦 實際數量</strong>：會買幾個幣</li>
+  </ul>
+
+  <h4>第 3 段：風險與獲利</h4>
+  <ul>
+    <li><strong>🧮 最多虧損</strong>：止損觸發時最多虧多少</li>
+    <li><strong>💰 TP1 達成獲利</strong>：訊號賺到 TP1 時您會賺多少</li>
+    <li><strong>💰 TP1+TP2 達成獲利</strong>：全部 TP 達成時的總獲利</li>
+  </ul>
+
+  <div class="callout tip">
+    <strong>💡 看訊號卡的順序</strong>
+    <p><strong>「我有多少（餘額）→ 我要投多少（保證金）→ 開多大倉（名義）→ 最壞虧多少（最多虧損）→ 順利賺多少（TP）」</strong>從上到下看，邏輯很順。</p>
+  </div>
+</section>
+
+<!-- ============ 05 RESULT ============ -->
+<section id="result">
+  <div class="section-head">
+    <div class="section-tag">SECTION 05</div>
+    <h2>看懂<span class="green">下單結果</span></h2>
+  </div>
+
+  <p>按下「真實下單」後會收到的訊息：</p>
+
+  <div class="bubble gold">
+    <strong>下單結果</strong>
+    環境：💰 真實 USDT<br>
+    交易對：BTC-USDT<br>
+    保證金模式：逐倉<br>
+    槓桿：50x<br>
+    模式：TP1+TP2 分批<br>
+    下單保證金：23.75 USDT（分倉 20 倉）<br>
+    名義倉位：1187 USDT<br>
+    🔓 TP1 保本：已啟用（緩衝 0.3%）<br>
+    最大虧損：35 USDT
+  </div>
+
+  <h3>關鍵欄位</h3>
+  <table>
+    <thead><tr><th>欄位</th><th>意思</th></tr></thead>
+    <tbody>
+      <tr><td><strong>下單保證金</strong></td><td>實際從您 BingX 帳戶扣掉的金額</td></tr>
+      <tr><td><strong>實際使用名義倉位</strong></td><td>BingX 真的接受多少倉位</td></tr>
+      <tr><td><strong>✅ 實際使用保證金</strong></td><td>對照 BingX App 看到的「保證金」</td></tr>
+      <tr><td><strong>最大虧損</strong></td><td>萬一止損觸發實際會虧多少</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <strong>⚠️ 縮量警告</strong>
+    <p>小幣（SAND、BITLIGHT 等）BingX 有單筆名義倉位上限。系統會自動縮減倉位避免被拒，並告訴您詳情。<strong>不影響交易安全</strong>。</p>
+  </div>
+</section>
+
+<!-- ============ 06 PROGRESS ============ -->
+<section id="progress">
+  <div class="section-head">
+    <div class="section-tag">SECTION 06</div>
+    <h2>看懂<span class="green">訊號完成通知</span></h2>
+  </div>
+
+  <h3>① TP1 觸發 → 鎖利通知</h3>
+  <div class="bubble gold">
+    <strong>🔐 TP1 保本已觸發</strong>
+    交易對：BTC-USDT　💰 真實倉<br>
+    TP1 已成交，止損移至 65195<br>
+    （進場價 65000 + 0.3% 緩衝）<br>
+    💰 TP1 已鎖獲利：+35.50 USDT<br><br>
+    剩餘倉位即使反轉也保證小賺出場 ✅
+  </div>
+  <p><strong>意思</strong>：TP1 達成了，您賺進 35.5 USDT，剩下倉位止損自動推到保本價。</p>
+
+  <h3>② 訊號賺錢出場</h3>
+  <div class="bubble">
+    <strong>✅ 訊號完成</strong>
+    交易對：BTC-USDT　💰 真實倉<br>
+    倉位獲利出場 🎉<br>
+    總獲利：+80.5023 USDT
+  </div>
+
+  <h3>③ 訊號虧損出場</h3>
+  <div class="bubble red">
+    <strong>🛑 倉位已結束</strong>
+    交易對：BTC-USDT　💰 真實倉<br>
+    倉位虧損出場<br>
+    本筆損失：-35.4521 USDT
+  </div>
+
+  <h3>④ 倉位全部平倉（您手動或 BingX 自動）</h3>
+  <div class="bubble blue">
+    <strong>ℹ️ 倉位已全部平倉</strong>
+    交易對：BTC-USDT　💰 真實倉<br>
+    總損益：+25.5000 USDT
+  </div>
+
+  <div class="callout warn">
+    <strong>⏱️ 通知有 1-3 分鐘延遲</strong>
+    <p>系統每 3 分鐘檢查一次 BingX 狀態。所以訊號完成後最多等 3 分鐘才會收到通知。<strong>不影響交易執行</strong>，您的訂單在觸發瞬間就已成交。</p>
+  </div>
+</section>
+
+<!-- ============ 07 SETTINGS ============ -->
+<section id="settings">
+  <div class="section-head">
+    <div class="section-tag">SECTION 07</div>
+    <h2>設定您的<span class="green">偏好</span></h2>
+  </div>
+
+  <h3>3 種設定方式</h3>
+
+  <div class="step">
+    <div class="step-num-big">A</div>
+    <h3>訊號卡上直接點按鈕</h3>
+    <p>每張訊號卡下方都有按鈕，可以即時切換：</p>
+    <ul>
+      <li><strong>真實 / 模擬</strong>：切換下單環境</li>
+      <li><strong>立即市價 / 理想 D 點</strong>：切換進場方式</li>
+      <li><strong>10 倉 / 20 倉 / 50 倉 / 自訂</strong>：切換分倉數</li>
+      <li><strong>分倉 / 固定金額</strong>：切換保證金模式</li>
+      <li><strong>進階設定</strong>：展開更多選項</li>
+    </ul>
+  </div>
+
+  <div class="step">
+    <div class="step-num-big">B</div>
+    <h3>進階設定（保本模式）</h3>
+    <table>
+      <thead><tr><th>保本模式</th><th>意思</th><th>適合誰</th></tr></thead>
+      <tbody>
+        <tr><td>🔐 <strong>TP1 保本</strong></td><td>TP1 達成 → SL 移到進場價</td><td>保守型</td></tr>
+        <tr><td>🔄 <strong>移動保本</strong></td><td>每個 TP 觸發都繼續推 SL</td><td>積極型</td></tr>
+        <tr><td>❌ 關閉</td><td>不自動移止損</td><td>專業</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="step">
+    <div class="step-num-big">C</div>
+    <h3>每日虧損上限（風控）</h3>
+    <p>設定每天虧到多少 USDT 就自動暫停所有交易。<strong>很重要的保護機制</strong>。</p>
+    <div class="callout tip">
+      <strong>💡 建議數值</strong>
+      <p>每日虧損上限 = 您可接受的「<strong>單日最壞情況</strong>」。例如餘額 1000，可以設 100（單日最多虧 10%）。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 08 COMMANDS ============ -->
+<section id="commands">
+  <div class="section-head">
+    <div class="section-tag">SECTION 08</div>
+    <h2>常用<span class="green">指令</span></h2>
+  </div>
+
+  <table>
+    <thead><tr><th>指令</th><th>用途</th></tr></thead>
+    <tbody>
+      <tr><td><strong>/start</strong></td><td>第一次申請 / 看當前狀態</td></tr>
+      <tr><td><strong>/help</strong></td><td>顯示所有可用指令</td></tr>
+      <tr><td><strong>/api</strong></td><td>查看您的 API 申請狀態</td></tr>
+      <tr><td><strong>/cancel</strong></td><td>取消當前操作</td></tr>
+      <tr><td><strong>/pnl</strong></td><td>查您的累計損益</td></tr>
+      <tr><td><strong>/settings</strong></td><td>查看當前所有設定</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout tip">
+    <strong>💡 用按鈕比指令快</strong>
+    <p>大部分操作直接點訊號卡上的按鈕，不用打指令。指令是給找不到按鈕的特殊情境用的。</p>
+  </div>
+</section>
+
+<!-- ============ 09 SAFETY ============ -->
+<section id="safety">
+  <div class="section-head">
+    <div class="section-tag">SECTION 09</div>
+    <h2><span class="green">安全保護</span>機制</h2>
+  </div>
+
+  <div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+    <div class="card">
+      <span class="card-icon">🛡️</span>
+      <h3>智能槓桿（不爆倉）</h3>
+      <p>市面上多數 bot 用「1 ÷ 止損% = 槓桿」，遇到大行情會強平先觸發。我們在止損% 加 0.5% 安全空間，<strong style="color:var(--green)">主流幣的止損永遠先觸發</strong>。</p>
+    </div>
+
+    <div class="card">
+      <span class="card-icon">🗂️</span>
+      <h3>分倉 + 0.95 緩衝</h3>
+      <p>系統把您的餘額分 20 份用，每筆訊號最多用 1 份的 95%。<strong style="color:var(--green)">單筆最大虧損 ≈ 餘額的 4.75%</strong>。連虧 20 次才會傷帳戶。</p>
+    </div>
+
+    <div class="card">
+      <span class="card-icon">🔐</span>
+      <h3>移動保本</h3>
+      <p>賺到 TP1 → 自動把止損推到保本價。<strong style="color:var(--green)">就算後續行情反轉，也保證小賺出場</strong>。</p>
+    </div>
+
+    <div class="card">
+      <span class="card-icon">🚨</span>
+      <h3>每日虧損熔斷</h3>
+      <p>單日虧損超過上限 → 系統自動暫停交易直到隔天。<strong style="color:var(--green)">避免情緒化連續下單</strong>。</p>
+    </div>
+  </div>
+
+  <div class="callout tip" style="margin-top:32px">
+    <strong>📊 實證數據</strong>
+    <p>12 個月模擬測試，1000 個用戶，<strong style="color:var(--green)">100% 帳戶都還在賺錢</strong>。對比一般 bot 同樣條件下 12 個月只剩 0% 用戶。</p>
+  </div>
+</section>
+
+<!-- ============ 10 FAQ ============ -->
+<section id="faq">
+  <div class="section-head">
+    <div class="section-tag">SECTION 10</div>
+    <h2>常見問題<span class="green">FAQ</span></h2>
+  </div>
+
+  <div class="faq">
+    <div class="faq-q">下單後 BingX App 顯示的數字跟訊號卡不一樣？</div>
+    <div class="faq-a">這是「縮量」造成的（小幣 BingX 有單筆上限）。下單結果訊息會顯示「<strong>實際使用名義倉位</strong>」跟「<strong>實際使用保證金</strong>」，後者就會等於 BingX App 看到的數字。</div>
+  </div>
+
+  <div class="faq">
+    <div class="faq-q">為什麼有時候訊號完成顯示「總獲利 0.0000 USDT」？</div>
+    <div class="faq-a">三種情況：1) 您手動平倉而 BingX 資料還沒同步；2) 訊號開倉超過 72 小時；3) 真的剛好打平。<strong>實際損益請以 BingX 帳戶為準</strong>。</div>
+  </div>
+
+  <div class="faq">
+    <div class="faq-q">可以手動平倉嗎？</div>
+    <div class="faq-a"><strong>可以</strong>。直接在 BingX App 按「一鍵平倉」。系統會在 1-3 分鐘內偵測到並發送「訊號完成」通知。<strong>不要部分平倉</strong>（平一半留一半），會讓系統誤判保本機制。</div>
+  </div>
+
+  <div class="faq">
+    <div class="faq-q">同時間多個訊號來，會一次都下嗎？</div>
+    <div class="faq-a">會。每個訊號各佔 1 倉。所以 20 倉模式同時下 20 筆訊號才會用完餘額。</div>
+  </div>
+
+  <div class="faq">
+    <div class="faq-q">收到「⚠️ 移動保本失敗」怎麼辦？</div>
+    <div class="faq-a">通常因為行情已經跑到 SL 上方（多單）或下方（空單）。<strong>不影響倉位</strong>，原本的 SL 還在守。</div>
+  </div>
+
+  <div class="faq">
+    <div class="faq-q">什麼時候用「TP1 保本」vs「移動保本」？</div>
+    <div class="faq-a"><strong>TP1 保本（推薦新手）</strong>：穩穩鎖獲利。<strong>移動保本</strong>：適合相信訊號會走遠的，多 TP 訊號會逐層鎖利賺更多，但有可能被中途回調掃出。</div>
+  </div>
+
+  <div class="faq">
+    <div class="faq-q">遇到「逆勢警告」訊號該下嗎？</div>
+    <div class="faq-a"><strong>建議跳過</strong>。逆勢訊號的勝率天生比順勢低（諧波 vs 4H 趨勢打架）。等待沒警告的訊號比較穩。</div>
+  </div>
+
+  <div class="faq">
+    <div class="faq-q">客戶被拒絕後可以重新申請嗎？</div>
+    <div class="faq-a">可以。看到「❌ 申請未通過。如需重新申請，請輸入 /start」直接重新打 /start 就能再次申請。</div>
+  </div>
+
+  <div class="faq">
+    <div class="faq-q">API Key 失效（換新的）怎麼辦？</div>
+    <div class="faq-a">聯繫管理員，他會用「🔑 刪除 API（重設）」幫您清掉舊的，您再輸入新的 API Key 即可。</div>
+  </div>
+
+  <div class="faq">
+    <div class="faq-q">收到 BingX 寄的「止損失效預警」信怎麼辦？</div>
+    <div class="faq-a">這是 BingX 系統自動發的<strong>標準風險提示</strong>，<strong style="color:var(--green)">不是 bot 出問題</strong>。<br>
+    原因：某些小幣高槓桿時，BingX 算出的強平價跟 bot 設的止損價會比較近。<br><br>
+    <strong>處理方式：</strong><br>
+    • 倉位還在 → 手動把 SL 拉遠 0.5%，或直接平倉<br>
+    • 已平倉 → 忽略此信即可<br><br>
+    我們有「分倉保護」兜底，<strong>單筆即使爆倉也不影響帳戶整體</strong>。實測 12 個月 100% 客戶帳戶都還在。</div>
+  </div>
+
+  <div class="faq">
+    <div class="faq-q">想清自己的交易紀錄怎麼辦？</div>
+    <div class="faq-a">用戶端沒有自助清紀錄指令（這是設計）。原因：<strong>保留歷史 = 看到完整累計 PnL</strong>。若真的需要清除，請聯繫管理員協助。</div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<div class="cta">
+  <h2>讓 Bot <span class="green">替您工作</span></h2>
+  <p>3 步驟、5 分鐘完成設定<br>先用模擬倉體驗，滿意再切真實</p>
+</div>
+
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <p><span class="green">BingX 訊號跟單 Bot</span> · USER MANUAL · v24</p>
+  <p style="margin-top:8px;font-size:11px">不爆倉設計 · 諧波訊號 · 自動鎖利 · 一條龍服務</p>
+</footer>
+
+</body>
+</html>
